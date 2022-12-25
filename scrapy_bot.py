@@ -5,8 +5,9 @@ import requests
 URL = "https://www.imdb.com/search/title/"
 
 
-def search_genre(genre):
+def search_genre(genre: str) -> list:
     try:
+        print(f" fetching....... genre-{genre}")
         page = requests.get(f"{URL}?genres={genre}")
         soup = BeautifulSoup(page.content, "html.parser")
         results = []
@@ -55,13 +56,15 @@ def search_genre(genre):
 
 
 def search_movie(movie_title):
-    pass
     page = requests.get(f"{URL}?title={movie_title}")
     soup = BeautifulSoup(page.content, "html.parser")
 
     result = []
 
     movie_card = soup.find("div", {"class": "lister-item mode-advanced"})
+
+    film_genre = movie_card.find("span", {"class": "genre"}).get_text().strip()
+
     film_rating = (
         movie_card.find("div", {"class": "ratings-imdb-rating"})
         # .find("strong")
@@ -76,16 +79,19 @@ def search_movie(movie_title):
         movie_card.find("h3", {"class": "lister-item-header"}).find("a").get_text()
     )
 
-    print(film_name, film_rating)
+    # print(film_name, film_rating)
     result.append(
         {
             "film_name": film_name,
             "film_rating": film_rating,
+            "film_genre": film_genre,
         }
     )
+    print(result)
+    return result
 
 
 # search_genre("comedy")
 # search_genre("action")
 
-search_movie("men in black")
+# search_movie("men in black")
